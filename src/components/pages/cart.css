@@ -1,0 +1,12 @@
+.cart-image:hover{
+    /* transform: scale(5); */
+    transform: translate(-50px,-50px) rotate(-30deg);
+}
+
+.cart-image{
+    transition: 2s;
+}
+
+td{
+    overflow: hidden;
+}
