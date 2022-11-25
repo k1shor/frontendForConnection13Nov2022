@@ -1,9 +1,54 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { register } from '../api/userapi'
+import Navbar from '../layout/Navbar'
 
 const Register = () => {
+    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
+    const [success, setSuccess] = useState(false)
+
+    // const [user,setUser] = useState({
+    //     username:'',
+    //     email:'',
+    //     password:''
+    // })
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        const user = { username, email, password }
+        register(user)
+            .then(data => {
+                if (data.error) {
+                    setError(data.error)
+                    setSuccess(false)
+                } else {
+                    setError('')
+                    setUsername('')
+                    setEmail('')
+                    setPassword('')
+                    setSuccess(true)
+                }
+            })
+    }
+    const showSuccess = () => {
+        if (success) {
+            return <div className='alert alert-success'>User created Successfully. Verification link has been sent to your email. </div>
+        }
+    }
+    const showError = () => {
+        if (error) {
+            return <div className='alert alert-danger'>{error}</div>
+        }
+    }
+
     return (
         <>
+        <Navbar/>
+            {showSuccess()}
+            {showError()}
             <main className="form-signin w-50 m-auto mt-5 border border-1 shadow-lg p-5">
                 <form>
                     <div className='text-center'>
@@ -12,6 +57,12 @@ const Register = () => {
                     <h1 className="h3 mb-3 fw-normal">Register</h1>
 
                     <div className="form-floating">
+                        <input type="text" className="form-control" id="fname" placeholder="first name" value={username} onChange={(e) => {
+                            return setUsername(e.target.value)
+                        }} />
+                        <label htmlFor="fname">Username</label>
+                    </div>
+                    {/* <div className="form-floating">
                         <input type="text" className="form-control" id="fname" placeholder="first name" />
                         <label htmlFor="fname">First Name</label>
                     </div>
@@ -51,28 +102,29 @@ const Register = () => {
                             <option>Biratnagar</option>
                         </select>
                         <label>Address</label>
-                    </div>
+                    </div> */}
 
 
                     <div className="form-floating">
-                        <input type="email" className="form-control" id="floatingInput" placeholder="name@example.com" />
+                        <input type="email" className="form-control" id="floatingInput" placeholder="name@example.com" onChange={e => setEmail(e.target.value)} value = {email} />
                         <label htmlFor="floatingInput">Email address</label>
                     </div>
                     <div className="form-floating">
-                        <input type="password" className="form-control" id="floatingPassword" placeholder="Password" />
+                        <input type="password" className="form-control" id="floatingPassword" placeholder="Password" onChange={e => setPassword(e.target.value)} value={password} />
+                        {/* <input type="password" className="form-control" id="floatingPassword" placeholder="Password" onChange={e=>setUser({...user, password: e.target.value})}/> */}
                         <label htmlFor="floatingPassword">Password</label>
                     </div>
-                    <div className="form-floating">
+                    {/* <div className="form-floating">
                         <input type="password" className="form-control" id="CfloatingPassword" placeholder="Password" />
                         <label htmlFor="CfloatingPassword">Confirm Password</label>
-                    </div>
+                    </div> */}
 
-                    <div className="checkbox mb-3">
+                    {/* <div className="checkbox mb-3">
                         <label>
                             <input type="checkbox" value="remember-me" /> I accept the terms and conditions.
                         </label>
-                    </div>
-                    <button className="w-100 btn btn-lg btn-primary" type="submit">Register</button>
+                    </div> */}
+                    <button className="w-100 btn btn-lg btn-primary" type="submit" onClick={handleSubmit}>Register</button>
                     Already have an account. <Link to='/signin'>Sign in</Link>
                     <p className="mt-5 mb-3 text-muted">&copy; 2017–2022</p>
                 </form>

@@ -1,7 +1,27 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { isAuthenticated, signout } from '../api/userapi'
 
 const Navbar = () => {
+    // let userInfo = isAuthenticated()
+    // let user = userInfo.user
+
+    let { user } = isAuthenticated()
+    // console.log(user)
+
+    const navigate = useNavigate()
+
+    const handleSignout = () => {
+        signout()
+        .then(data=>{
+            if(data.error){
+                console.log(data.error)
+            }
+            else{
+                navigate('/signin')
+            }
+        })
+    }
     return (
         <>
             <div className='container-fluid bg-dark text-warning sticky-top'>
@@ -16,9 +36,30 @@ const Navbar = () => {
                         </form>
                     </div>
                     <div className='col-md-3 d-flex justify-content-evenly pt-1'>
-                        <Link to="/register"><i className="bi bi-person-plus-fill fs-3 text-warning"></i></Link>
-                        <Link to="/signin"><i className="bi bi-box-arrow-in-left fs-3 text-warning"></i></Link>
-                        <Link to="/cart"><i className='bi bi-cart fs-3 text-warning'></i></Link>
+                        {
+                            !user &&
+                            <>
+                                <Link to="/register"><i className="bi bi-person-plus-fill fs-3 text-warning"></i></Link>
+                                <Link to="/signin"><i className="bi bi-box-arrow-in-left fs-3 text-warning"></i></Link>
+                            </>
+                        }
+                        {
+                            user && user.role===0 &&
+                            <>
+                                <Link to='/userprofile'><i className='bi bi-person-circle fs-3 text-warning'></i></Link>
+                                <Link to="/cart"><i className='bi bi-cart fs-3 text-warning'></i></Link>
+                                <Link to="/"><i className='bi bi-box-arrow-right fs-3 text-warning' onClick={handleSignout}></i></Link>
+                            </>
+                        }
+                        {
+                            user && user.role===1 &&
+                            <>
+                                
+                                <Link to="/admin/dashboard"><i className='bi bi-speedometer fs-3 text-warning'></i></Link>
+                                <Link to="/" onClick={handleSignout}><i className='bi bi-box-arrow-right fs-3 text-warning'></i></Link>
+                            </>
+                        }
+
                     </div>
                 </div>
             </div>
